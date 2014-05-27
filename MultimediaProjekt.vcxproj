@@ -19,8 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{DDC23B96-EB5A-4110-978A-4B96CB0E4BCF}</ProjectGuid>
+    <ProjectGuid>{53A7A3E0-B650-4DF2-8A33-494639523E85}</ProjectGuid>
     <RootNamespace>MultimediaProjekt</RootNamespace>
+    <ProjectName>MultimediaProjekt</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -63,6 +64,7 @@
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="MultimediaProjekt.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup />
@@ -107,21 +109,33 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\mmp\opencv-2.4.8\opencv\build\include\opencv;C:\mmp\opencv-2.4.8\opencv\build\include;C:\mmp\vlfeat-0.9.18;C:\mmp\svm_light\src;C:\mmp\boost_1_53_0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>C:\mmp\opencv-2.4.8\opencv\build\x64\vc11\lib;C:\mmp\vlfeat-0.9.18\bin\win64;C:\mmp\boost_1_53_0\lib;C:\mmp\svm_light\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opencv_core248.lib;opencv_highgui248.lib;opencv_imgproc248.lib;vl.lib;svm_light_x64.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Classification.cpp" />
+    <ClCompile Include="FeatureExtraction.cpp" />
     <ClCompile Include="hog_util.cpp" />
+    <ClCompile Include="Image.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Preprocessing.cpp" />
+    <ClCompile Include="Training.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Classification.h" />
+    <ClInclude Include="FeatureExtraction.h" />
     <ClInclude Include="hog_util.h" />
+    <ClInclude Include="Image.h" />
+    <ClInclude Include="OriginalImage.h" />
+    <ClInclude Include="PATHS.h" />
+    <ClInclude Include="Preprocessing.h" />
+    <ClInclude Include="SlidingWindow.h" />
+    <ClInclude Include="Training.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -90,7 +90,7 @@ float* hog_glyphs(int glyph_size)
       /* along horizontal direction */
       double slope = y2 / x2 ;
       double offset = (1 - slope) * (glyph_size - 1) / 2 ;
-      int skip = (1 - fabs(cos(angle))) / 2 * glyph_size ;
+      int skip = (int)((1 - fabs(cos(angle))) / 2 * glyph_size) ;
       int i, j ;
       for (i = skip ; i < (signed)glyph_size - skip ; ++i) {
 				j = cvRound(slope * i + offset) ;
@@ -104,7 +104,7 @@ float* hog_glyphs(int glyph_size)
       /* along vertical direction */
       double slope = x2 / y2 ;
       double offset = (1 - slope) * (glyph_size - 1) / 2 ;
-      int skip = (1 - sin(angle)) / 2 * glyph_size ;
+      int skip = (int)((1 - sin(angle)) / 2 * glyph_size) ;
       int i, j ;
       for (j = skip ; j < (signed)glyph_size - skip; ++j) {
         i = cvRound(slope * j + offset) ;

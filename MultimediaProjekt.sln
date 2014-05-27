@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MultimediaProjekt", "MultimediaProjekt.vcxproj", "{DDC23B96-EB5A-4110-978A-4B96CB0E4BCF}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MultimediaProjekt", "MultimediaProjekt.vcxproj", "{53A7A3E0-B650-4DF2-8A33-494639523E85}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,14 +11,14 @@ Global
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{DDC23B96-EB5A-4110-978A-4B96CB0E4BCF}.Debug|Win32.ActiveCfg = Debug|Win32
-		{DDC23B96-EB5A-4110-978A-4B96CB0E4BCF}.Debug|Win32.Build.0 = Debug|Win32
-		{DDC23B96-EB5A-4110-978A-4B96CB0E4BCF}.Debug|x64.ActiveCfg = Debug|x64
-		{DDC23B96-EB5A-4110-978A-4B96CB0E4BCF}.Debug|x64.Build.0 = Debug|x64
-		{DDC23B96-EB5A-4110-978A-4B96CB0E4BCF}.Release|Win32.ActiveCfg = Release|Win32
-		{DDC23B96-EB5A-4110-978A-4B96CB0E4BCF}.Release|Win32.Build.0 = Release|Win32
-		{DDC23B96-EB5A-4110-978A-4B96CB0E4BCF}.Release|x64.ActiveCfg = Release|x64
-		{DDC23B96-EB5A-4110-978A-4B96CB0E4BCF}.Release|x64.Build.0 = Release|x64
+		{53A7A3E0-B650-4DF2-8A33-494639523E85}.Debug|Win32.ActiveCfg = Debug|Win32
+		{53A7A3E0-B650-4DF2-8A33-494639523E85}.Debug|Win32.Build.0 = Debug|Win32
+		{53A7A3E0-B650-4DF2-8A33-494639523E85}.Debug|x64.ActiveCfg = Debug|x64
+		{53A7A3E0-B650-4DF2-8A33-494639523E85}.Debug|x64.Build.0 = Debug|x64
+		{53A7A3E0-B650-4DF2-8A33-494639523E85}.Release|Win32.ActiveCfg = Release|Win32
+		{53A7A3E0-B650-4DF2-8A33-494639523E85}.Release|Win32.Build.0 = Release|Win32
+		{53A7A3E0-B650-4DF2-8A33-494639523E85}.Release|x64.ActiveCfg = Release|x64
+		{53A7A3E0-B650-4DF2-8A33-494639523E85}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
