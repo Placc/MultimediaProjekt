@@ -42,7 +42,7 @@
     <ClCompile Include="WeightedRect.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="Image.cpp">
+    <ClCompile Include="OriginalImage.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>

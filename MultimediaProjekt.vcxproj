@@ -123,7 +123,7 @@
     <ClCompile Include="Evaluation.cpp" />
     <ClCompile Include="FeatureExtraction.cpp" />
     <ClCompile Include="hog_util.cpp" />
-    <ClCompile Include="Image.cpp" />
+    <ClCompile Include="OriginalImage.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Preprocessing.cpp" />
     <ClCompile Include="Training.cpp" />

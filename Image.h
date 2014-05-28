@@ -14,7 +14,6 @@ class Image{
 public:
 	Mat image;
 	Mat hog_features;
-	vector<WeightedRect> detectedBoxes;
 	vector<SlidingWindow> slidingWindows;
 	float scale_factor;
 	string path;
@@ -24,8 +23,6 @@ public:
 		this->image = image;
 		this->scale_factor = scale_factor;
 	}
-
-	void addDetectedBox(WeightedRect rect);
 };
 
 #endif

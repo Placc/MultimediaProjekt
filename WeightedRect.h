@@ -16,6 +16,7 @@ public:
 		this->weight = weight;
 	}
 	bool checkOverlap(Rect boundingBox, double overlap);
+	double getOverlap(Rect boundingBox);
 };
 
 #endif

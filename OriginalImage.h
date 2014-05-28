@@ -12,6 +12,8 @@ class OriginalImage : public Image{
 
 public:
 	vector<Image> lower_images;
+	vector<WeightedRect> detectedBoxes;
+	void addDetectedBox(WeightedRect rect);
 	OriginalImage(string path) : Image(imread(path, CV_LOAD_IMAGE_COLOR), path, 1.0) {}
 };
 
