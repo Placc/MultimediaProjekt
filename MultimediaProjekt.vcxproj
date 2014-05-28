@@ -119,15 +119,20 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Classification.cpp" />
+    <ClCompile Include="Classifier.cpp" />
+    <ClCompile Include="Evaluation.cpp" />
     <ClCompile Include="FeatureExtraction.cpp" />
     <ClCompile Include="hog_util.cpp" />
     <ClCompile Include="Image.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Preprocessing.cpp" />
     <ClCompile Include="Training.cpp" />
+    <ClCompile Include="WeightedRect.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Classification.h" />
+    <ClInclude Include="Classifier.h" />
+    <ClInclude Include="Evaluation.h" />
     <ClInclude Include="FeatureExtraction.h" />
     <ClInclude Include="hog_util.h" />
     <ClInclude Include="Image.h" />
@@ -136,6 +141,7 @@
     <ClInclude Include="Preprocessing.h" />
     <ClInclude Include="SlidingWindow.h" />
     <ClInclude Include="Training.h" />
+    <ClInclude Include="WeightedRect.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

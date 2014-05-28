@@ -1,5 +1,6 @@
 #include "Training.h"
 #include "Classification.h"
+#include "PATHS.h"
 #include <iostream>
 #include <fstream>
 

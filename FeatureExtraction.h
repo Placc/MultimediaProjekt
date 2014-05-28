@@ -14,8 +14,8 @@
 #define STEPS_PER_OCTAVE 5
 #define SLIDING_WINDOW_HEIGHT 16
 #define SLIDING_WINDOW_WIDTH 8
-#define SLIDING_WINDOW_X_STEP 1 //Should be in interval [1;SLIDING_WINDOW_WIDTH]
-#define SLIDING_WINDOW_Y_STEP 1 //Should be in interval [1;SLIDING_WINDOW_HEIGHT]
+#define SLIDING_WINDOW_X_STEP 1 
+#define SLIDING_WINDOW_Y_STEP 1 
 
 namespace FeatureExtraction{
 	

@@ -24,9 +24,6 @@
     <ClCompile Include="FeatureExtraction.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="Image.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="Preprocessing.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -34,6 +31,18 @@
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="Classification.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="Classifier.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="Evaluation.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="WeightedRect.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="Image.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
@@ -63,6 +72,15 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="Training.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Classifier.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Evaluation.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="WeightedRect.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

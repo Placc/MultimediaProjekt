@@ -7,8 +7,10 @@
 #include "Preprocessing.h"
 #include "SlidingWindow.h"
 #include "PATHS.h"
-#include "svm_light\sparse_vector.h"
-#include "svm_light\svm_light_util.h"
+#include "Classifier.h"
+#include "opencv2\imgproc\imgproc.hpp"
+#include "cv.h"
+#include "highgui.h"
 
 using namespace std;
 

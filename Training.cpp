@@ -21,7 +21,7 @@ namespace Training {
 		}
 		for(vector<OriginalImage>::iterator negIt = neg_examples.begin(); negIt != neg_examples.end(); ++negIt){
 			
-			//Way too much negative examples.. Maybe randomly select some?
+			//TODO: Randomly select some hypothesis of all, s.t. not everything has to be computed...
 
 			FeatureExtraction::computeHOGPyramid(*negIt);
 			FeatureExtraction::computeSlidingWindows(*negIt);

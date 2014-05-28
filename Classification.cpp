@@ -12,10 +12,14 @@ namespace Classification {
 		for(vector<OriginalImage>::iterator posIt = pos_examples.begin(); posIt != pos_examples.end(); ++posIt){
 			FeatureExtraction::extractHOGFeatures(*posIt);
 			FeatureExtraction::computeSlidingWindows(*posIt);
+
+			//TODO: Normally, we should iterate and scale image as we do in training... Doesn't make sense?!
 		}
 		for(vector<OriginalImage>::iterator negIt = neg_examples.begin(); negIt != neg_examples.end(); ++negIt){
 			FeatureExtraction::extractHOGFeatures(*negIt);
 			FeatureExtraction::computeSlidingWindows(*negIt);
+
+			//TODO: Normally, we should iterate and scale image as we do in training... Doesn't make sense?!
 		}
 	}
 }
