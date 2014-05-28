@@ -67,6 +67,9 @@ namespace FeatureExtraction {
 				int swWidth = (int)(SLIDING_WINDOW_WIDTH * CELL_SIZE / image.scale_factor);
 				int swHeight = (int)(SLIDING_WINDOW_HEIGHT * CELL_SIZE / image.scale_factor);
 				int swHogPos = (y / CELL_SIZE * hogCellsPerRow) + x / CELL_SIZE;
+				
+				//TODO: Not sure, if it's rowRange or colRange.. I have no idea of the Matrix-Positions :D
+
 				Mat swHog = image.hog_features.rowRange(swHogPos, swHogPos + SLIDING_WINDOW_HEIGHT * hogCellsPerRow + SLIDING_WINDOW_WIDTH);
 				Rect swRect((int)(x / image.scale_factor), (int)(y / image.scale_factor), swWidth, swHeight);
 				SlidingWindow sw(swHog, swRect);
