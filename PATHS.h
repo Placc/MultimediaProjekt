@@ -9,6 +9,7 @@
 #define TEST_NEG_ORIGINAL "C:\\Users\\Placc\\Desktop\\INRIAPerson\\Test\\neg\\"
 #define TRAIN_ANNOTATIONS "C:\\Users\\Placc\\Desktop\\INRIAPerson\\Train\\annotations\\"
 #define TEST_ANNOTATIONS "C:\\Users\\Placc\\Desktop\\INRIAPerson\\Test\\annotations\\"
-#define MODEL_FILE "model.svm"
+#define MODEL_STANDARD_FILE "model.svm"
+#define MODEL_HARD_EX_FILE "model.hard.svm"
 
 #endif

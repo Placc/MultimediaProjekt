@@ -32,7 +32,7 @@ public:
 	}
 
 	void loadModel(string modelFile);
-	void convertToSparseVector(Mat hog_features);
+	SparseVector convertToSparseVector(Mat hog_features);
 	void addPositiveExample(Mat hog_features);
 	void addNegativeExample(Mat hog_features);
 	void classify(Mat hog_features);
