@@ -1,9 +1,10 @@
 #ifndef _IMAGE_H_INCLUDED_
 #define _IMAGE_H_INCLUDED_
 
+#pragma once
+
 #include "cv.h"
 #include "highgui.h"
-#include "WeightedRect.h"
 #include "SlidingWindow.h"
 
 using namespace cv;

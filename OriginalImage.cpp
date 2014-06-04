@@ -1,6 +1,6 @@
 #include "OriginalImage.h"
 
-void OriginalImage::addDetectedBox(WeightedRect rect){
+void OriginalImage::addDetectedBox(WeightedRect &rect){
 	bool overlapping = false;
 	for(int i = 0; i < detectedBoxes.size(); i++){
 		if(rect.checkOverlap(detectedBoxes[i].rect, 0.2)){

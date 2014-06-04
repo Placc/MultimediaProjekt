@@ -1,6 +1,8 @@
 #ifndef _WEIGHTEDRECT_H_INCLUDED_
 #define _WEIGHTEDRECT_H_INCLUDED_
 
+#pragma once
+
 #include "cv.h"
 #include "highgui.h"
 
@@ -9,14 +11,21 @@ using namespace std;
 
 class WeightedRect{
 public:	
-	float weight;
+	double weight;
 	Rect rect;
-	WeightedRect(Rect rect, float weight){
+	
+	WeightedRect(){
+		weight = 0.0;
+		rect = Rect(0,0,0,0);
+	};
+
+	WeightedRect(Rect &rect, double weight){
 		this->rect = rect;
 		this->weight = weight;
-	}
-	bool checkOverlap(Rect boundingBox, double overlap);
-	double getOverlap(Rect boundingBox);
+	};
+
+	bool checkOverlap(Rect &boundingBox, double overlap);
+	double getOverlap(Rect &boundingBox);
 };
 
 #endif

@@ -16,7 +16,7 @@ namespace FeatureExtraction {
 		vl_size height =vl_hog_get_height(hog);
 		vl_size width = vl_hog_get_width(hog);
 		float* hogArray = (float*)vl_malloc(width * height * vl_hog_get_dimension(hog) * sizeof(float));
-		vl_hog_extract(hog, hogArray);
+		vl_hog_extract(hog, hogArray);		
 		vl_hog_delete(hog);
 		vl_free(imageArray);
 		Mat features = convert_hog_array(hogArray, NUMBER_OF_ORIENTATIONS, (int)width, (int)height, (int)width, (int)height); 
@@ -43,36 +43,36 @@ namespace FeatureExtraction {
 				resize(image.image, workingCopy,  Size(static_cast<int>(image.image.cols / scaleFactors[i]), static_cast<int>(image.image.rows / scaleFactors[i])));
 			else
 				resize(workingCopy, workingCopy,  Size(static_cast<int>(image.image.cols / scaleFactors[i]), static_cast<int>(image.image.rows / scaleFactors[i])));
-			
-			if(!(workingCopy.rows < CELL_SIZE) && !(workingCopy.cols < CELL_SIZE))
-			{
-				if(scaleFactors[i] < 1.0f){
+			if(workingCopy.cols > SLIDING_WINDOW_WIDTH * CELL_SIZE && workingCopy.rows > SLIDING_WINDOW_HEIGHT * CELL_SIZE){	
+				if(scaleFactors[i] > 1.0f){
 					Image scaledImage(workingCopy, image.path, scaleFactors[i]);
 					extractHOGFeatures(scaledImage);	
 					image.lower_images.push_back(scaledImage);
 				} else {
 					extractHOGFeatures(image);
 				}
-			} else 
-				break;
-		
+			}
 		}
 		free(scaleFactors);
+	}
+
+	Mat getHogOfSlidingWindow(Mat hog_features, int swHogPos, int hogCellsPerRow){
+		Mat result(SLIDING_WINDOW_WIDTH * SLIDING_WINDOW_HEIGHT, hog_features.cols, CV_32FC1);
+		for(int j = 0; j < SLIDING_WINDOW_HEIGHT; j++)
+			for(int i = 0; i < SLIDING_WINDOW_WIDTH; i++)
+				hog_features.row(swHogPos + j * hogCellsPerRow + i).copyTo(result.row(j * SLIDING_WINDOW_WIDTH + i));
+		return result;
 	}
 
 	void computeSlidingWindows(Image &image){
 		int hogCellsPerRow = image.image.cols / CELL_SIZE; 
 		for(int y = 0; y < image.image.rows - SLIDING_WINDOW_HEIGHT * CELL_SIZE; y += SLIDING_WINDOW_X_STEP * CELL_SIZE)
 			for(int x = 0; x < image.image.cols - SLIDING_WINDOW_WIDTH * CELL_SIZE; x += SLIDING_WINDOW_Y_STEP * CELL_SIZE){
-				int swWidth = (int)(SLIDING_WINDOW_WIDTH * CELL_SIZE / image.scale_factor);
-				int swHeight = (int)(SLIDING_WINDOW_HEIGHT * CELL_SIZE / image.scale_factor);
-				int swHogPos = (y / CELL_SIZE * hogCellsPerRow) + x / CELL_SIZE;
-				
-				//TODO: Not sure, if it's rowRange or colRange.. I have no idea of the Matrix-Positions :D
-
-				Mat swHog = image.hog_features.rowRange(swHogPos, swHogPos + SLIDING_WINDOW_HEIGHT * hogCellsPerRow + SLIDING_WINDOW_WIDTH);
-				Rect swRect((int)(x / image.scale_factor), (int)(y / image.scale_factor), swWidth, swHeight);
-				SlidingWindow sw(swHog, swRect);
+				int swWidth = (int)(SLIDING_WINDOW_WIDTH * CELL_SIZE * image.scale_factor);
+				int swHeight = (int)(SLIDING_WINDOW_HEIGHT * CELL_SIZE * image.scale_factor);
+				int swHogPos = (int)(((double)(y) / CELL_SIZE * (double)(hogCellsPerRow)) + (double)(x) / CELL_SIZE);
+				Rect swRect((int)(x * image.scale_factor), (int)(y * image.scale_factor), swWidth, swHeight);
+				SlidingWindow sw(getHogOfSlidingWindow(image.hog_features, swHogPos, hogCellsPerRow), swRect);
 				image.slidingWindows.push_back(sw);
 			}
 	}

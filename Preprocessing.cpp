@@ -6,9 +6,14 @@ using namespace std;
 
 namespace Preprocessing {
 	
-	vector<Rect> getBoundingBoxesByFile(string path){
+	vector<Rect> getBoundingBoxesByFile(string p){
 		vector<Rect> result;
-		ifstream file(path);
+		stringstream path;
+		if(p.find("pos")){
+			path << p.substr(0, p.find("pos")) << "annotations" << p.substr(p.find_last_of("\\"), p.find('.') + 1 - p.find_last_of("\\")) << "txt";
+		} else 
+			path << p;
+		ifstream file(path.str());
 		string s;
 		while(getline(file, s)){
 			if(s.find("Bounding box") != string::npos){
@@ -26,7 +31,7 @@ namespace Preprocessing {
 		return result;
 	}
 
-	void loadImagesByDirectory(string dirPath, vector<OriginalImage> &image_vector){
+	void loadPathsByDirectory(string dirPath, vector<String> &image_vector){
 		string str;
 		stringstream stream;
 		stream << "LS " << dirPath << " > flist";
@@ -35,8 +40,7 @@ namespace Preprocessing {
 		while(getline(file, str)){
 			stream.str("");
 			stream << dirPath << str;
-			OriginalImage image(stream.str());
-			image_vector.push_back(image);
+			image_vector.push_back(stream.str());
 		}
 		file.close();
 		remove("flist");
@@ -55,5 +59,18 @@ namespace Preprocessing {
 				}
 			}
 		}*/
+	}
+
+	bool checkINRIADirectory(string dirPath){
+		if (_access(dirPath.c_str(), 0) == 0){
+			string strings[] = {TRAIN_POS_NORMALIZED, TRAIN_ANNOTATIONS, TRAIN_NEG_ORIGINAL, TRAIN_POS_ORIGINAL,
+				TEST_ANNOTATIONS, TEST_NEG_ORIGINAL, TEST_POS_NORMALIZED, TEST_POS_ORIGINAL};
+			for(int i = 0; i < 8; i++){
+				if (!(_access((dirPath + strings[i]).c_str(), 0) == 0))
+					return false;
+			}
+			return true;
+		} 
+		return false;
 	}
 }

@@ -1,6 +1,8 @@
 #ifndef _FEATUREEXTRACTION_H_INCLUDED_
 #define _FEATUREEXTRACTION_H_INCLUDED_
 
+#pragma once
+
 #include "cv.h"
 #include "highgui.h"
 #include "Image.h"
@@ -23,7 +25,7 @@ namespace FeatureExtraction{
 	void computeHOGPyramid(OriginalImage &image);
 	float* computeScaleFactors();
 	void computeSlidingWindows(Image &image);
-
+	Mat getHogOfSlidingWindow(Mat hog_features, int swHogPos, int hogCellsPerRow);
 }
 
 #endif

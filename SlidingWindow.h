@@ -1,6 +1,8 @@
 #ifndef _SLIDINGWINDOW_H_INCLUDED_
 #define _SLIDINGWINDOW_H_INCLUDED_
 
+#pragma once
+
 #include "cv.h"
 #include "highgui.h"
 
@@ -11,9 +13,8 @@ class SlidingWindow {
 public:
 	Mat hog_features;
 	Rect slidingWindow;
-	bool classification;
 
-	SlidingWindow(Mat hog_features, Rect slidingWindow){
+	SlidingWindow(Mat &hog_features, Rect &slidingWindow){
 		this->hog_features = hog_features;
 		this->slidingWindow = slidingWindow;
 	}
