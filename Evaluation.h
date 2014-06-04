@@ -5,6 +5,10 @@
 #include "cv.h"
 #include "highgui.h"
 #include "OriginalImage.h"
+#include "Preprocessing.h"
+#include "WeightedRect.h"
+#include "FeatureExtraction.h"
+#include "PATHS.h"
 
 namespace Evaluation {
 	void showImageWithDetections(OriginalImage &image);
