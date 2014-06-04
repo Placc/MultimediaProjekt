@@ -7,6 +7,8 @@
 #include "cv.h"
 #include "FeatureExtraction.h"
 #include "highgui.h"
+#include "Preprocessing.h"
+#include "PATHS.h"
 
 #define DIMENSIONS (31*SLIDING_WINDOW_WIDTH*SLIDING_WINDOW_HEIGHT)
 #define COST 0
@@ -17,7 +19,7 @@ using namespace cv;
 class Classifier {
 private:
 	SvmLightUtil svm;
-	joachims::MODEL* model;
+	const joachims::MODEL* model;
 	SvmLightUtil::Parameters params;
 	vector<SparseVector> pos_examples;
 	vector<SparseVector> neg_examples;
@@ -35,7 +37,7 @@ public:
 	SparseVector convertToSparseVector(Mat hog_features);
 	void addPositiveExample(Mat hog_features);
 	void addNegativeExample(Mat hog_features);
-	void classify(Mat hog_features);
+	double classify(Mat hog_features);
 	void train(string modelFile);
 };
 
