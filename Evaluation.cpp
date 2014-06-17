@@ -1,7 +1,5 @@
 #include "Evaluation.h"
 
-//TO-DO: weight!!!
-
 void drawStringInImage(string label, Mat image, int x, int y, Scalar color) {
 	int fontface = cv::FONT_HERSHEY_SIMPLEX;
 	double scale = 0.5;
@@ -18,9 +16,53 @@ float recall(float tp, float fn) {
 	return(tp/(tp+fn));
 }
 
+
 namespace Evaluation{
-	void showImageWithDetections(OriginalImage &image) {
+	//Detections threshold-abhängig, daher Detections erst nach dem durchgehen festlegen!
+	void determinateDetections(float threshold) {
+		
+	}
+	//!!wohin mit den WeightedRects? Irgendwo speichern??
+	vector<WeightedRect> calcWeightedRectsInAllScalesOfImage(Classifier classifier, OriginalImage &image) {
+		FeatureExtraction::computeHOGPyramid(image);
+		FeatureExtraction::computeSlidingWindows(image);
+		for(std::vector<Image>::iterator scaleIt = (image).lower_images.begin(); scaleIt != (image).lower_images.end(); ++scaleIt){
+			FeatureExtraction::computeSlidingWindows(*scaleIt);
+		}		
+		//"unschön" -> in FeatureExtraction Funktion computeAllSlidingWindows?
+		FeatureExtraction::computeSlidingWindows(image);
+		for(std::vector<Image>::iterator scaleIt = image.lower_images.begin(); scaleIt != image.lower_images.end(); ++scaleIt){
+			FeatureExtraction::computeSlidingWindows(*scaleIt);
+		}
+
+		//Alle Slidingwindows vom Original_Image durchgehen, jedesmal von der hog_features - Mat 
+		//den SlidingWindow-Bereich anschauen, diesen "klassifizieren"
+		//  double value = classifier.classify(image.hog_features(slidingWindow));
+		//Wenn value > 0, dann Original_Image.addDetectedBox(slidingWindow Region)  
+		//[wird in dieser Funktion nur dann hinzugefügt, wenn nicht schon eine andere dort]
+		vector<SlidingWindow> slidingWindows = image.slidingWindows;
+		for(vector<SlidingWindow>::iterator slidWinIt = slidingWindows.begin(); slidWinIt!=slidingWindows.end(); ++slidWinIt) {
+			Rect window = (*slidWinIt).slidingWindow;
+			double distanceFromHyperplane = classifier.classify(image.hog_features(window));
+			WeightedRect detectedBox(window, distanceFromHyperplane);
+			!!!!weiterverwenden!!!
+		}
+		//...
+		//Das gleiche dann für alle lower_images vom Image
+		vector<Image> lowerImages = image.lower_images;
+		for(vector<Image>::iterator lowImIt = lowerImages.begin(); lowImIt!=lowerImages.end(); ++lowImIt) {
+			Image lowerImage = (*lowImIt);
+			for(vector<SlidingWindow>::iterator slidWinIt = slidingWindows.begin(); slidWinIt!=slidingWindows.end(); ++slidWinIt) {
+				Rect window = (*slidWinIt).slidingWindow;
+				double value = classifier.classify(lowerImage.hog_features(window));
+				WeightedRect detectedBox(window, value);
+				!!!!weiterverwenden!!!
+			}
+		}	
+	}
+	void showImageWithDetections(OriginalImage &image, float threshold) {
 		Mat matToShow = image.image.clone();	
+		//umbenennen
 		vector<Rect> boundingBoxes = Preprocessing::getBoundingBoxesByFile(image.path);
 		//Draw (positive) detection boxes
 		for(vector<WeightedRect>::iterator detBoxIt = image.detectedBoxes.begin(); detBoxIt != image.detectedBoxes.end(); ++detBoxIt) {
@@ -43,7 +85,7 @@ namespace Evaluation{
 			}
 			char text [20];
 			sprintf(text, "%i/%", (weight*100));
-			//!Verschiebung nach unten (+10) nicht Hardcoded
+			//Verschiebung nach unten (+10) nicht Hardcoded
 			drawStringInImage(text, matToShow, detRect.tl.x, detRect.tl.y +10, CV_RGB(0,255,0));
 
 		}
@@ -57,30 +99,94 @@ namespace Evaluation{
 		cv::imshow(image.path, matToShow);
 		cv::waitKey();
 	}
-	void blub() {
-		vector<OriginalImage> pos_examples;
-		vector<OriginalImage> neg_examples;
+	void qualitativeEvaluation() { //3.5
+		Classifier classifier = Classifier();
+		vector<String> pos_examples;
+		vector<String> neg_examples;
+		Preprocessing::loadPathsByDirectory(TEST_POS_ORIGINAL, pos_examples);
+		Preprocessing::loadPathsByDirectory(TEST_NEG_ORIGINAL, neg_examples);
+		
+		for(vector<String>::iterator negIt = neg_examples.begin(); negIt != neg_examples.end(); ++negIt){
+			OriginalImage image(*negIt);
+			calcWeightedRectsInAllScalesOfImage(classifier, image);
+
+			//Anschließend hinzugefügte detectedBoxes durchgehen
+			//schauen, welche true und welche false ist
+			//in einen Vektor<double value, boolean trueOrFalsePositive> schreiben.
+			//Nachdem man dann alle durch ist: diesen Vektor sortieren
+
+			//showImageWithDetections(image);
+		}
+	
+	}
+	void quantitativeEvaluation() { //3.6
+		Classifier classifier = Classifier();
+		vector<String> pos_examples;
+		vector<String> neg_examples;
 		Rect roi(Point(16,16), Point(80, 144));
-		Preprocessing::loadImagesByDirectory(TEST_POS_NORMALIZED, pos_examples);
-		Preprocessing::loadImagesByDirectory(TEST_NEG_ORIGINAL, neg_examples);
-		for(vector<OriginalImage>::iterator posIt = pos_examples.begin(); posIt != pos_examples.end(); ++posIt){
-			(*posIt).image = (*posIt).image(roi);
-			FeatureExtraction::computeHOGPyramid(*posIt);
-			FeatureExtraction::computeSlidingWindows(*posIt);
-			for(std::vector<Image>::iterator scaleIt = (*posIt).lower_images.begin(); scaleIt != (*posIt).lower_images.end(); ++scaleIt){
+		//Preprocessing::loadPathsByDirectory(TEST_POS_ORIGINAL, pos_examples);
+		Preprocessing::loadPathsByDirectory(TEST_POS_NORMALIZED, pos_examples);
+		Preprocessing::loadPathsByDirectory(TEST_NEG_ORIGINAL, neg_examples);
+		for(vector<String>::iterator posIt = pos_examples.begin(); posIt != pos_examples.end(); ++posIt){
+			OriginalImage image(*posIt);
+			image.image = image.image(roi);
+			FeatureExtraction::computeHOGPyramid(image);
+			//showImageWithDetections(image);
+		}
+
+		for(vector<String>::iterator negIt = neg_examples.begin(); negIt != neg_examples.end(); ++negIt){
+			OriginalImage image(*negIt);
+			FeatureExtraction::computeHOGPyramid(image);
+			FeatureExtraction::computeSlidingWindows(image);
+			for(std::vector<Image>::iterator scaleIt = (image).lower_images.begin(); scaleIt != (image).lower_images.end(); ++scaleIt){
 				FeatureExtraction::computeSlidingWindows(*scaleIt);
 			}
-		}
-		for(vector<OriginalImage>::iterator negIt = neg_examples.begin(); negIt != neg_examples.end(); ++negIt){
 			
-			//TODO: Randomly select some hypothesis of all, s.t. not everything has to be computed...
-
-			FeatureExtraction::computeHOGPyramid(*negIt);
-			FeatureExtraction::computeSlidingWindows(*negIt);
-			for(std::vector<Image>::iterator scaleIt = (*negIt).lower_images.begin(); scaleIt != (*negIt).lower_images.end(); ++scaleIt){
+			//"unschön" -> in FeatureExtraction Funktion computeAllSlidingWindows?
+			FeatureExtraction::computeSlidingWindows(image);
+			for(std::vector<Image>::iterator scaleIt = image.lower_images.begin(); scaleIt != image.lower_images.end(); ++scaleIt){
 				FeatureExtraction::computeSlidingWindows(*scaleIt);
 			}
-		}
 
+
+			//Alle Slidingwindows vom Original_Image durchgehen, jedesmal von der hog_features - Mat 
+			//den SlidingWindow-Bereich anschauen, diesen "klassifizieren"
+			//  double value = classifier.classify(image.hog_features(slidingWindow));
+			//Wenn value > 0, dann Original_Image.addDetectedBox(slidingWindow Region)  
+			//[wird in dieser Funktion nur dann hinzugefügt, wenn nicht schon eine andere dort]
+			vector<SlidingWindow> slidingWindows = image.slidingWindows;
+			for(vector<SlidingWindow>::iterator slidWinIt = slidingWindows.begin(); slidWinIt!=slidingWindows.end(); ++slidWinIt) {
+				Rect window = (*slidWinIt).slidingWindow;
+				double distanceFromHyperplane = classifier.classify(image.hog_features(window));
+				WeightedRect detectedBox(window, distanceFromHyperplane);
+					//if (distanceFromHyperplane>0) { image.addDetectedBox(detectedBox); }
+			}
+			//...
+			//Das gleiche dann für alle lower_images vom Image
+			vector<Image> lowerImages = image.lower_images;
+			for(vector<Image>::iterator lowImIt = lowerImages.begin(); lowImIt!=lowerImages.end(); ++lowImIt) {
+				Image lowerImage = (*lowImIt);
+				for(vector<SlidingWindow>::iterator slidWinIt = slidingWindows.begin(); slidWinIt!=slidingWindows.end(); ++slidWinIt) {
+					Rect window = (*slidWinIt).slidingWindow;
+					double value = classifier.classify(lowerImage.hog_features(window));
+					if (value>0) {
+						//*=scaleFactor (oder /= ???), da window nur die Position im lower_Image ist!
+						window.x*=lowerImage.scale_factor; window.y*=lowerImage.scale_factor; 
+						window.width*=lowerImage.scale_factor; window.height*=lowerImage.scale_factor;
+						
+						WeightedRect detectedBox(window, value);
+						image.addDetectedBox(detectedBox);
+					}
+				}
+			}
+
+
+			//Anschließend hinzugefügte detectedBoxes durchgehen
+			//schauen, welche true und welche false ist
+			//in einen Vektor<double value, boolean trueOrFalsePositive> schreiben.
+			//Nachdem man dann alle durch ist: diesen Vektor sortieren
+
+			//showImageWithDetections(image);
+		}
 	}
 }

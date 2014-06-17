@@ -8,6 +8,7 @@
 #include "Preprocessing.h"
 #include "WeightedRect.h"
 #include "FeatureExtraction.h"
+#include "Classifier.h"
 #include "PATHS.h"
 
 namespace Evaluation {
