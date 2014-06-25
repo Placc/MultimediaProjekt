@@ -135,16 +135,16 @@ void hog_render(float* image, int num_channels, float const* descriptor, int gly
 
 	for (y = 0 ; y < (signed)hog_array_height ; ++y) {
 		for (x = 0 ; x < (signed)hog_array_width ; ++x) {
-			float minWeight = 0 ;
-			float maxWeight = 0 ;
+			float mindistanceFromHyperplane = 0 ;
+			float maxdistanceFromHyperplane = 0 ;
 
 			for (k = 0 ; k < (signed)num_orientations ; ++k) {
-				float weight;
+				float distanceFromHyperplane;
 				float const * glyph = glyphs + k * (glyph_size*glyph_size) ; // glyth for the k-th orientation
 				float * glyphImage = image + glyph_size * x + y * hog_array_width * (glyph_size*glyph_size);
 
 				// original code
-				//weight =
+				//distanceFromHyperplane =
 				//descriptor[k * hogStride] +
 				//descriptor[(k + num_orientations) * hogStride] +
 				//descriptor[(k + 2 * num_orientations) * hogStride] ;
@@ -153,18 +153,18 @@ void hog_render(float* image, int num_channels, float const* descriptor, int gly
 				// insensitive features
 				// --
 				int cell_offset = (y * hog_array_width + x) * hog_descriptor_size;
-				weight =
+				distanceFromHyperplane =
 				descriptor[cell_offset + k] +
 				descriptor[cell_offset + k + num_orientations] +
 				descriptor[cell_offset + k + 2 * num_orientations] ;
 				// --
 
-				maxWeight = std::max(weight, maxWeight) ;
-				minWeight = std::min(weight, minWeight);
+				maxdistanceFromHyperplane = std::max(distanceFromHyperplane, maxdistanceFromHyperplane) ;
+				mindistanceFromHyperplane = std::min(distanceFromHyperplane, mindistanceFromHyperplane);
 
 				for (cy = 0 ; cy < (signed)glyph_size ; ++cy) {
 					for (cx = 0 ; cx < (signed)glyph_size ; ++cx) {
-						*glyphImage++ += weight * (*glyph++) ;
+						*glyphImage++ += distanceFromHyperplane * (*glyph++) ;
 					}
 					glyphImage += (hog_array_width - 1) * glyph_size  ;
 				}
@@ -175,7 +175,7 @@ void hog_render(float* image, int num_channels, float const* descriptor, int gly
 				for (cy = 0 ; cy < (signed)glyph_size ; ++cy) {
 					for (cx = 0 ; cx < (signed)glyph_size ; ++cx) {
 						float value = *glyphImage ;
-						*glyphImage++ = std::max(minWeight, std::min(maxWeight, value)) ;
+						*glyphImage++ = std::max(mindistanceFromHyperplane, std::min(maxdistanceFromHyperplane, value)) ;
 					}
 					glyphImage += (hog_array_width - 1) * glyph_size;
 				}

@@ -5,6 +5,7 @@
 
 #include "cv.h"
 #include "highgui.h"
+#include "ClassifiedRect.h"
 
 using namespace cv;
 using namespace std;
@@ -12,11 +13,11 @@ using namespace std;
 class SlidingWindow {
 public:
 	Mat hog_features;
-	Rect slidingWindow;
+	ClassifiedRect slidingWindow;
 
 	SlidingWindow(Mat &hog_features, Rect &slidingWindow){
 		this->hog_features = hog_features;
-		this->slidingWindow = slidingWindow;
+		this->slidingWindow.rect = slidingWindow;
 	}
 };
 

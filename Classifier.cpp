@@ -40,6 +40,7 @@ double Classifier::classify( Mat hog_features )
 {
 	SparseVector vec = convertToSparseVector( hog_features );
 	double value = svm.classify( vec, DIMENSIONS, model );
+	//joachims::MODEL model;
 
 	return value;
 }

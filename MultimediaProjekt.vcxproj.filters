@@ -39,10 +39,10 @@
     <ClCompile Include="Evaluation.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="WeightedRect.cpp">
+    <ClCompile Include="OriginalImage.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="OriginalImage.cpp">
+    <ClCompile Include="ClassifiedRect.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
@@ -80,7 +80,7 @@
     <ClInclude Include="Evaluation.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="WeightedRect.h">
+    <ClInclude Include="ClassifiedRect.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

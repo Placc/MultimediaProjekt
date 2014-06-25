@@ -127,7 +127,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Preprocessing.cpp" />
     <ClCompile Include="Training.cpp" />
-    <ClCompile Include="WeightedRect.cpp" />
+    <ClCompile Include="ClassifiedRect.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Classification.h" />
@@ -141,7 +141,7 @@
     <ClInclude Include="Preprocessing.h" />
     <ClInclude Include="SlidingWindow.h" />
     <ClInclude Include="Training.h" />
-    <ClInclude Include="WeightedRect.h" />
+    <ClInclude Include="ClassifiedRect.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

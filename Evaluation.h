@@ -6,7 +6,7 @@
 #include "highgui.h"
 #include "OriginalImage.h"
 #include "Preprocessing.h"
-#include "WeightedRect.h"
+#include "ClassifiedRect.h"
 #include "FeatureExtraction.h"
 #include "Classifier.h"
 #include "PATHS.h"

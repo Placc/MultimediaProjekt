@@ -9,7 +9,7 @@ using namespace std;
 
 int main(int argc, char* argv[])
 {
-	cout << "+++ MMP - Team 3 +++" << endl;
+/*	cout << "+++ MMP - Team 3 +++" << endl;
 	cout << "Starting..." << endl;
 	ifstream model(MODEL_FILE);
 	bool exists = model.good();
@@ -20,7 +20,7 @@ int main(int argc, char* argv[])
 	} else {
 		cout << "No model found. Creating new by training..." << endl;
 		Training::trainSVM(MODEL_FILE);
-	}
+	}*/
 }
 
 
