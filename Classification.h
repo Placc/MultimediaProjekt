@@ -11,6 +11,7 @@
 #include "opencv2\imgproc\imgproc.hpp"
 #include "cv.h"
 #include "highgui.h"
+#include "WeightedRect.h"
 
 using namespace std;
 
