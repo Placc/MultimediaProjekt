@@ -39,7 +39,6 @@ public:
 	void addNegativeExample(Mat hog_features);
 	double classify(Mat hog_features);
 	void train(string modelFile);
-
 	// destuctor für classifier
 	// funktionen die nichts an membern ändern mit const versehen
 };

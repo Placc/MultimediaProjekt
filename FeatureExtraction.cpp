@@ -72,7 +72,7 @@ namespace FeatureExtraction {
 				int swHeight = (int)(SLIDING_WINDOW_HEIGHT * CELL_SIZE * image.scale_factor);
 				int swHogPos = (int)(((double)(y) / CELL_SIZE * (double)(hogCellsPerRow)) + (double)(x) / CELL_SIZE);
 				Rect swRect((int)(x * image.scale_factor), (int)(y * image.scale_factor), swWidth, swHeight);
-				SlidingWindow sw(getHogOfSlidingWindow(image.hog_features, swHogPos, hogCellsPerRow), swRect);
+				SlidingWindow sw(getHogOfSlidingWindow(image.hog_features, swHogPos, hogCellsPerRow), swRect, image.scale_factor);
 				image.slidingWindows.push_back(sw);
 			}
 	}

@@ -14,10 +14,12 @@ class SlidingWindow {
 public:
 	Mat hog_features;
 	ClassifiedRect slidingWindow;
+	float scaleFactor;
 
-	SlidingWindow(Mat &hog_features, Rect &slidingWindow){
+	SlidingWindow(Mat &hog_features, Rect &slidingWindow, float scaleFactor){
 		this->hog_features = hog_features;
 		this->slidingWindow.rect = slidingWindow;
+		this->scaleFactor = scaleFactor;
 	}
 };
 

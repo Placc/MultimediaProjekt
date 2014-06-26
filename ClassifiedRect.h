@@ -14,15 +14,18 @@ class ClassifiedRect{
 public:	
 	double distanceFromHyperplane;
 	Rect rect;
+	bool groundTruth;
 	
 	ClassifiedRect(){
 		distanceFromHyperplane = 0.0;
 		rect = Rect(0,0,0,0);
+		groundTruth=false;
 	};
 
 	ClassifiedRect(Rect &rect, double distanceFromHyperplane){
 		this->rect = rect;
 		this->distanceFromHyperplane = distanceFromHyperplane;
+		groundTruth=false;
 	};
 
 	bool checkOverlap(Rect &boundingBox, double overlap);

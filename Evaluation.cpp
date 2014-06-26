@@ -19,10 +19,15 @@ float recall(float tp, float fn) {
 
 namespace Evaluation{
 	//Detections threshold-abhängig, daher Detections erst nach dem durchgehen festlegen!
-	void determinateDetections(float threshold) {	
-
+	void determinateDetections(OriginalImage image, vector<ClassifiedRect> classifiedRectsInImage, float threshold) {	
+		for(vector<ClassifiedRect>::iterator clasRectIt = classifiedRectsInImage.begin(); clasRectIt!=classifiedRectsInImage.end(); ++clasRectIt) {
+			if ((*clasRectIt).distanceFromHyperplane>threshold) {
+				image.addDetectedBox(*clasRectIt);
+			}
+			else break;
+		}
 	}
-	//
+	//TO-Do!!
 	void plotList(vector<double, bool> listOfClassifiedRects) {
 
 	}
@@ -31,9 +36,6 @@ namespace Evaluation{
 
 		FeatureExtraction::computeHOGPyramid(image);
 		FeatureExtraction::computeSlidingWindows(image);
-		for(std::vector<Image>::iterator scaleIt = (image).lower_images.begin(); scaleIt != (image).lower_images.end(); ++scaleIt){
-			FeatureExtraction::computeSlidingWindows(*scaleIt);
-		}
 		//"unschön" -> in FeatureExtraction Funktion computeAllSlidingWindows?
 		FeatureExtraction::computeSlidingWindows(image);
 		for(std::vector<Image>::iterator scaleIt = image.lower_images.begin(); scaleIt != image.lower_images.end(); ++scaleIt){
@@ -43,15 +45,22 @@ namespace Evaluation{
 		//Alle Slidingwindows vom Original_Image durchgehen, jedesmal von der hog_features - Mat 
 		//den SlidingWindow-Bereich anschauen, diesen "klassifizieren"
 		//  double value = classifier.classify(image.hog_features(slidingWindow));
-		//Wenn value > 0, dann Original_Image.addDetectedBox(slidingWindow Region)  
-		//[wird in dieser Funktion nur dann hinzugefügt, wenn nicht schon eine andere dort]
+		//SlidingWindow anschließend zur Liste hinzu
 		vector<SlidingWindow> slidingWindows = image.slidingWindows;
 		for(vector<SlidingWindow>::iterator slidWinIt = slidingWindows.begin(); slidWinIt!=slidingWindows.end(); ++slidWinIt) {
 			Rect window = (*slidWinIt).slidingWindow.rect;
 			double distanceFromHyperplane = classifier.classify(image.hog_features(window));
 			ClassifiedRect detectionBox(window, distanceFromHyperplane);
 			(*slidWinIt).slidingWindow = detectionBox;
-			//listClassifiedRectsOfImage.insert(detectionBox);
+			float scaleFactor = (*slidWinIt).scaleFactor;
+			Rect windowNormalized(
+				window.x * scaleFactor, 
+				window.y * scaleFactor, 
+				window.width * scaleFactor,
+				window.height * scaleFactor
+			);
+			ClassifiedRect detectionBoxNormalized(windowNormalized, distanceFromHyperplane);
+			listClassifiedRectsOfImage.push_back(detectionBoxNormalized);
 		}
 		//...
 		//Das gleiche dann für alle lower_images vom Image
@@ -60,16 +69,40 @@ namespace Evaluation{
 			Image lowerImage = (*lowImIt);
 			for(vector<SlidingWindow>::iterator slidWinIt = slidingWindows.begin(); slidWinIt!=slidingWindows.end(); ++slidWinIt) {
 				Rect window = (*slidWinIt).slidingWindow.rect;
-				double value = classifier.classify(lowerImage.hog_features(window));
-				ClassifiedRect detectionBox(window, value);
+				double distanceFromHyperplane = classifier.classify(lowerImage.hog_features(window));
+				ClassifiedRect detectionBox(window, distanceFromHyperplane);
 				(*slidWinIt).slidingWindow = detectionBox;
+				float scaleFactor = (*slidWinIt).scaleFactor;
+				Rect windowNormalized(
+					window.x * scaleFactor, 
+					window.y * scaleFactor, 
+					window.width * scaleFactor,
+					window.height * scaleFactor
+				);
+				ClassifiedRect detectionBoxNormalized(windowNormalized, distanceFromHyperplane);
+				listClassifiedRectsOfImage.push_back(detectionBoxNormalized);
 			}
 		}	
+		return(listClassifiedRectsOfImage);
+	}
+	void compareWithGroundTruthBoxes(OriginalImage &image, vector<ClassifiedRect> classifiedRectsInImage) {
+		vector<Rect> groundTruthBoxes = Preprocessing::getBoundingBoxesByFile(image.path);
+		
+		for(vector<ClassifiedRect>::iterator crIt = classifiedRectsInImage.begin(); crIt != classifiedRectsInImage.end(); ++crIt) {
+			ClassifiedRect detRect = (*crIt);
+			for(vector<Rect>::iterator gtBoxIt = groundTruthBoxes.begin(); gtBoxIt != groundTruthBoxes.end(); ++gtBoxIt) {
+				Rect rect = (*gtBoxIt);
+				bool overlapping = detRect.checkOverlap(rect, 0.5);
+				if (overlapping) {
+					break;
+					detRect.groundTruth=true;
+				}
+			}
+		}
 	}
 	void showImageWithDetections(OriginalImage &image, float threshold) {
 		Mat matToShow = image.image.clone();	
-		//umbenennen
-		vector<Rect> boundingBoxes = Preprocessing::getBoundingBoxesByFile(image.path);
+		vector<Rect> groundTruthBoxes = Preprocessing::getBoundingBoxesByFile(image.path);
 		//Draw (positive) detection boxes
 		for(vector<ClassifiedRect>::iterator detBoxIt = image.detectedBoxes.begin(); detBoxIt != image.detectedBoxes.end(); ++detBoxIt) {
 			double distanceFromHyperplane = (*detBoxIt).distanceFromHyperplane; 
@@ -84,8 +117,8 @@ namespace Evaluation{
 
 			//max overlap
 			double max = 0;
-			for(vector<Rect>::iterator bouBoxIt = boundingBoxes.begin(); bouBoxIt != boundingBoxes.end(); ++bouBoxIt) {
-				Rect rect = (*bouBoxIt);
+			for(vector<Rect>::iterator gtBoxIt = groundTruthBoxes.begin(); gtBoxIt != groundTruthBoxes.end(); ++gtBoxIt) {
+				Rect rect = (*gtBoxIt);
 				double overlap = (*detBoxIt).getOverlap(rect);
 				if (overlap > max) max=overlap;
 			}
@@ -96,8 +129,8 @@ namespace Evaluation{
 
 		}
 		//Draw (true) bounding boxes
-		for(vector<Rect>::iterator bouBoxIt = boundingBoxes.begin(); bouBoxIt != boundingBoxes.end(); ++bouBoxIt) {
-			Rect rect = (*bouBoxIt);
+		for(vector<Rect>::iterator gtBoxIt = groundTruthBoxes.begin(); gtBoxIt != groundTruthBoxes.end(); ++gtBoxIt) {
+			Rect rect = (*gtBoxIt);
 			//Farbe, etc. Nicht-Hardcoded
 			cv::rectangle(matToShow, rect, CV_RGB(255,255,0), 1,8,0);
 		}
@@ -105,6 +138,10 @@ namespace Evaluation{
 		cv::imshow(image.path, matToShow);
 		cv::waitKey();
 	}
+	bool sortingClassifiedRects(ClassifiedRect cr1, ClassifiedRect cr2) { 
+		return(cr1.distanceFromHyperplane < cr2.distanceFromHyperplane); 
+	}
+
 	void qualitativeEvaluation() { //3.5
 		Classifier classifier = Classifier();
 		vector<String> pos_examples;
@@ -112,19 +149,32 @@ namespace Evaluation{
 		Preprocessing::loadPathsByDirectory(TEST_POS_ORIGINAL, pos_examples);
 		Preprocessing::loadPathsByDirectory(TEST_NEG_ORIGINAL, neg_examples);
 		
-		for(vector<String>::iterator negIt = neg_examples.begin(); negIt != neg_examples.end(); ++negIt){
-			OriginalImage image(*negIt);
-			calcClassifiedRectsInAllScalesOfImage(classifier, image);
+		for(vector<String>::iterator posIt = pos_examples.begin(); posIt != pos_examples.end(); ++posIt){
+			OriginalImage image(*posIt);
 
-			//Anschließend ClassifiedRects durchgehen
-			//schauen, welche true und welche false ist, bei bestimmtem threshold
-			//in einen Vektor<double value, boolean trueOrFalsePositive> schreiben.
-			//Nachdem man dann alle durch ist: diesen Vektor sortieren
+			//Werden schon normalisiert (ins Original-Bild umgerechnet)
+			vector<ClassifiedRect> classifiedRectsInImage = calcClassifiedRectsInAllScalesOfImage(classifier, image);
+			compareWithGroundTruthBoxes(image, classifiedRectsInImage);
+			sort(classifiedRectsInImage.begin(), classifiedRectsInImage.end(), sortingClassifiedRects);
 
-			//showImageWithDetections(image);
+			//(Wie kommt man an den Threshold?)
+			float threshold;
+			determinateDetections(image, classifiedRectsInImage, threshold);
+			showImageWithDetections(image);
 		}
 
-		//für positiv genauso
+		for(vector<String>::iterator negIt = neg_examples.begin(); negIt != pos_examples.end(); ++negIt){
+			OriginalImage image(*negIt);
+			vector<ClassifiedRect> classifiedRectsInImage = calcClassifiedRectsInAllScalesOfImage(classifier, image);
+			compareWithGroundTruthBoxes(image, classifiedRectsInImage);
+			sort(classifiedRectsInImage.begin(), classifiedRectsInImage.end(), sortingClassifiedRects);
+
+			//(Wie kommt man an den Threshold?)
+			float threshold;
+			determinateDetections(image, classifiedRectsInImage, threshold);
+			showImageWithDetections(image);
+		}
+
 	}
 	void quantitativeEvaluation() { //3.6
 		Classifier classifier = Classifier();
@@ -137,63 +187,21 @@ namespace Evaluation{
 		for(vector<String>::iterator posIt = pos_examples.begin(); posIt != pos_examples.end(); ++posIt){
 			OriginalImage image(*posIt);
 			image.image = image.image(roi);
-			FeatureExtraction::computeHOGPyramid(image);
-			//showImageWithDetections(image);
+			//To-Do: hog_features vom Image berechnen
+			//		 classify
 		}
 
 		for(vector<String>::iterator negIt = neg_examples.begin(); negIt != neg_examples.end(); ++negIt){
 			OriginalImage image(*negIt);
-			FeatureExtraction::computeHOGPyramid(image);
-			FeatureExtraction::computeSlidingWindows(image);
-			for(std::vector<Image>::iterator scaleIt = (image).lower_images.begin(); scaleIt != (image).lower_images.end(); ++scaleIt){
-				FeatureExtraction::computeSlidingWindows(*scaleIt);
-			}
-			
-			//"unschön" -> in FeatureExtraction Funktion computeAllSlidingWindows?
-			FeatureExtraction::computeSlidingWindows(image);
-			for(std::vector<Image>::iterator scaleIt = image.lower_images.begin(); scaleIt != image.lower_images.end(); ++scaleIt){
-				FeatureExtraction::computeSlidingWindows(*scaleIt);
-			}
 
+			//Werden schon normalisiert (ins Original-Bild umgerechnet)
+			vector<ClassifiedRect> classifiedRectsInImage = calcClassifiedRectsInAllScalesOfImage(classifier, image);
+			compareWithGroundTruthBoxes(image, classifiedRectsInImage);
+			sort(classifiedRectsInImage.begin(), classifiedRectsInImage.end(), sortingClassifiedRects);
 
-			//Alle Slidingwindows vom Original_Image durchgehen, jedesmal von der hog_features - Mat 
-			//den SlidingWindow-Bereich anschauen, diesen "klassifizieren"
-			//  double value = classifier.classify(image.hog_features(slidingWindow));
-			//Wenn value > 0, dann Original_Image.addDetectedBox(slidingWindow Region)  
-			//[wird in dieser Funktion nur dann hinzugefügt, wenn nicht schon eine andere dort]
-			vector<SlidingWindow> slidingWindows = image.slidingWindows;
-			for(vector<SlidingWindow>::iterator slidWinIt = slidingWindows.begin(); slidWinIt!=slidingWindows.end(); ++slidWinIt) {
-				Rect window = (*slidWinIt).slidingWindow.rect;
-				double distanceFromHyperplane = classifier.classify(image.hog_features(window));
-				ClassifiedRect detectedBox(window, distanceFromHyperplane);
-					//if (distanceFromHyperplane>0) { image.addDetectedBox(detectedBox); }
-			}
-			//...
-			//Das gleiche dann für alle lower_images vom Image
-			vector<Image> lowerImages = image.lower_images;
-			for(vector<Image>::iterator lowImIt = lowerImages.begin(); lowImIt!=lowerImages.end(); ++lowImIt) {
-				Image lowerImage = (*lowImIt);
-				for(vector<SlidingWindow>::iterator slidWinIt = slidingWindows.begin(); slidWinIt!=slidingWindows.end(); ++slidWinIt) {
-/*					Rect window = (*slidWinIt).slidingWindow.rect;
-					double value = classifier.classify(lowerImage.hog_features(window));
-					if (value>0) {
-						//*=scaleFactor (oder /= ???), da window nur die Position im lower_Image ist!
-						window.x*=lowerImage.scale_factor; window.y*=lowerImage.scale_factor; 
-						window.width*=lowerImage.scale_factor; window.height*=lowerImage.scale_factor;
-						
-						ClassifiedRect detectedBox(window, value);
-						image.addDetectedBox(detectedBox);
-					}*/
-				}
-			}
-
-
-			//Anschließend hinzugefügte detectedBoxes durchgehen
-			//schauen, welche true und welche false ist
-			//in einen Vektor<double value, boolean trueOrFalsePositive> schreiben.
-			//Nachdem man dann alle durch ist: diesen Vektor sortieren
-
-			//showImageWithDetections(image);
+			//(Wie kommt man an den Threshold?)
+			float threshold;
+			determinateDetections(image, classifiedRectsInImage, threshold);
 		}
 	}
 }
