@@ -10,8 +10,8 @@ namespace Classification
 	*	reads in all of the test images and stores them in pos/neg example vectors
 	*	also loads the previously trained model
 	*	classifies each image seperately and stores the possible detections in a vector
-	*@param string modelFile: directory where the trained model is saved
-	*@param string testDir: directory where the test dataset is stored
+	*	@param string modelFile: path where the trained model is saved
+	*	@param string testDir: directory where the test dataset is stored
 	*/
 	void classify(string modelFile, string testDir){
 
@@ -34,11 +34,9 @@ namespace Classification
 			{
 				double distance_hyperplane = classifier.classify( ( *it ).hog_features );
 
-				if( distance_hyperplane > 0 )			//threshhold ggf anpassen
+				if( distance_hyperplane > 0 )			
 				{
-					WeightedRect rect;
-					rect.rect = ( *it ).slidingWindow;
-					rect.weight = distance_hyperplane;
+					ClassifiedRect rect(( *it ).slidingWindow, distance_hyperplane);
 					img.addDetectedBox( rect );
 				}
 
@@ -56,9 +54,8 @@ namespace Classification
 
 					if( distance_hyperplane > 0 )
 					{
-						WeightedRect rect;
-						rect.rect = ( *it ).slidingWindow;
-						rect.weight = distance_hyperplane;
+						
+						ClassifiedRect rect( ( *it ).slidingWindow, distance_hyperplane );
 						img.addDetectedBox( rect );
 					}
 
@@ -67,7 +64,7 @@ namespace Classification
 			}
 
 			Evaluation::showImageWithDetections( img );
-			//TODO: Normally, we should iterate and scale image as we do in training... Doesn't make sense?!
+			
 		}
 
 		for(vector<string>::iterator negIt = neg_examples.begin(); negIt != neg_examples.end(); ++negIt)
@@ -80,11 +77,9 @@ namespace Classification
 			{
 				double distance_hyperplane = classifier.classify( ( *it ).hog_features );
 
-				if( distance_hyperplane > 0 )			//threshhold ggf anpassen
+				if( distance_hyperplane > 0 )			
 				{
-					WeightedRect rect;
-					rect.rect = ( *it ).slidingWindow;
-					rect.weight = distance_hyperplane;
+					ClassifiedRect rect( ( *it ).slidingWindow, distance_hyperplane );
 					img.addDetectedBox( rect );
 				}
 
@@ -101,9 +96,7 @@ namespace Classification
 
 					if( distance_hyperplane > 0 )
 					{
-						WeightedRect rect;
-						rect.rect = ( *it ).slidingWindow;
-						rect.weight = distance_hyperplane;
+						ClassifiedRect rect( ( *it ).slidingWindow, distance_hyperplane );
 						img.addDetectedBox( rect );
 					}
 

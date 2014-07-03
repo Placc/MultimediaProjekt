@@ -9,6 +9,7 @@ namespace Training {
 	*	trains an svm model using the InriaPerson training dataset
 	*	choses a number of negative detections randomly chosen from each image
 	*	saves the freshly trained model to the harddisk
+	*	@param string modelFile: path to the model file
 	*/
 	void trainSVM(string modelFile){
 		vector<string> pos_examples;
@@ -28,8 +29,6 @@ namespace Training {
 		}
 		for(vector<string>::iterator negIt = neg_examples.begin(); negIt != neg_examples.end(); ++negIt)
 		{
-			
-			//TODO: Randomly select some hypothesis of all, s.t. not everything has to be computed...
 
 			OriginalImage img( *negIt );
 			FeatureExtraction::computeHOGPyramid( img );
@@ -69,8 +68,6 @@ namespace Training {
 					classifier.addNegativeExample( hog_features );
 					count++;
 				}
-
-				// beispiele im original image anzeigen (um zu sehen aus welchen bereichen gesampled wird )
 				
 		}
 		classifier.train( MODEL_STANDARD_FILE );
@@ -79,8 +76,6 @@ namespace Training {
 
 		for(vector<string>::iterator negIt = neg_examples.begin(); negIt != neg_examples.end(); ++negIt)
 		{
-			
-			//TODO: Randomly select some hypothesis of all, s.t. not everything has to be computed...
 
 			OriginalImage img( *negIt );
 			FeatureExtraction::computeHOGPyramid( img );
@@ -117,7 +112,5 @@ namespace Training {
 		}
 
 		classifier.train( MODEL_HARD_EX_FILE );
-
-		//Sliding Window HOG-Features are in OriginalImage.slidingWindows and OriginalImage.lower_images[x].slidingWindows
 	}
 }

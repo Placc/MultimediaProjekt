@@ -13,7 +13,7 @@ using namespace std;
 class SlidingWindow {
 public:
 	Mat hog_features;
-	ClassifiedRect slidingWindow;
+	Rect slidingWindow;
 	float scaleFactor;
 
 	SlidingWindow(Mat &hog_features, Rect &slidingWindow, float scaleFactor){
