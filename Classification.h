@@ -12,6 +12,7 @@
 #include "cv.h"
 #include "highgui.h"
 #include "WeightedRect.h"
+#include "Evaluation.h"
 
 using namespace std;
 

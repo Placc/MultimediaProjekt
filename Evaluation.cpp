@@ -100,7 +100,7 @@ namespace Evaluation{
 			}
 		}
 	}
-	void showImageWithDetections(OriginalImage &image, float threshold) {
+	void showImageWithDetections(OriginalImage &image) {
 		Mat matToShow = image.image.clone();	
 		vector<Rect> groundTruthBoxes = Preprocessing::getBoundingBoxesByFile(image.path);
 		//Draw (positive) detection boxes

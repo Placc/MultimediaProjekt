@@ -11,6 +11,7 @@ namespace Classification
 		Preprocessing::loadPathsByDirectory(TEST_POS_ORIGINAL, pos_examples);
 		Preprocessing::loadPathsByDirectory(TEST_NEG_ORIGINAL, neg_examples);
 		Classifier classifier = Classifier();
+		classifier.loadModel(MODEL_HARD_EX_FILE);
 
 		for(vector<string>::iterator posIt = pos_examples.begin(); posIt != pos_examples.end(); ++posIt)
 		{
@@ -30,6 +31,7 @@ namespace Classification
 					img.addDetectedBox( rect );
 				}
 
+				
 			}
 
 
@@ -53,6 +55,7 @@ namespace Classification
 
 			}
 
+			Evaluation::showImageWithDetections( img );
 			//TODO: Normally, we should iterate and scale image as we do in training... Doesn't make sense?!
 		}
 
@@ -94,10 +97,10 @@ namespace Classification
 					}
 
 				}
+
+				Evaluation::showImageWithDetections( img );
 			}
 
-
-			//TODO: Normally, we should iterate and scale image as we do in training... Doesn't make sense?!
 		}
 
 
