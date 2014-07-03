@@ -5,7 +5,18 @@ using namespace cv;
 
 namespace Classification 
 {
+
+	/**
+	*	reads in all of the test images and stores them in pos/neg example vectors
+	*	also loads the previously trained model
+	*	classifies each image seperately and stores the possible detections in a vector
+	*@param string modelFile: directory where the trained model is saved
+	*@param string testDir: directory where the test dataset is stored
+	*/
 	void classify(string modelFile, string testDir){
+
+	
+
 		vector<string> pos_examples;
 		vector<string> neg_examples;
 		Preprocessing::loadPathsByDirectory(TEST_POS_ORIGINAL, pos_examples);

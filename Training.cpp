@@ -5,6 +5,11 @@ using namespace std;
 
 namespace Training {
 	
+	/**
+	*	trains an svm model using the InriaPerson training dataset
+	*	choses a number of negative detections randomly chosen from each image
+	*	saves the freshly trained model to the harddisk
+	*/
 	void trainSVM(string modelFile){
 		vector<string> pos_examples;
 		vector<string> neg_examples;
